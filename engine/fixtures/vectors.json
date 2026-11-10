@@ -1,0 +1,87 @@
+{
+  "note": "Published cryptographic test vectors. Values are taken from the standards named in each entry and are reproduced here so the engine can be verified against an outside source rather than against itself.",
+  "sha256": [
+    {
+      "name": "SHA-256 of the empty string",
+      "source": "FIPS 180-4 worked example",
+      "inputUtf8": "",
+      "expectedHex": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "SHA-256 of \"abc\"",
+      "source": "FIPS 180-4 worked example",
+      "inputUtf8": "abc",
+      "expectedHex": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+    },
+    {
+      "name": "SHA-256 of \"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq\"",
+      "source": "FIPS 180-4 worked example, two block message",
+      "inputUtf8": "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+      "expectedHex": "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1"
+    }
+  ],
+  "pbkdf2Sha256": [
+    {
+      "name": "PBKDF2-HMAC-SHA256, 1 iteration, 64 byte output",
+      "source": "RFC 7914 section 11",
+      "password": "passwd",
+      "saltUtf8": "salt",
+      "iterations": 1,
+      "outputBits": 512,
+      "expectedHex": "55ac046e56e3089fec1691c22544b605f94185216dde0465e68b9d57c20dacbc49ca9cccf179b645991664b39d77ef317c71b845b1e30bd509112041d3a19783"
+    },
+    {
+      "name": "PBKDF2-HMAC-SHA256, 4096 iterations, 32 byte output",
+      "source": "RFC 6070 case 3 parameters with SHA-256 as the PRF",
+      "password": "password",
+      "saltUtf8": "salt",
+      "iterations": 4096,
+      "outputBits": 256,
+      "expectedHex": "c5e478d59288c841aa530db6845c4c8d962893a001ce4e11a4963873aa98134a"
+    }
+  ],
+  "aesGcm": [
+    {
+      "name": "AES-128-GCM test case 1, empty plaintext",
+      "source": "NIST GCM specification, test case 1",
+      "keyHex": "00000000000000000000000000000000",
+      "nonceHex": "000000000000000000000000",
+      "plaintextHex": "",
+      "expectedCiphertextWithTagHex": "58e2fccefa7e3061367f1d57a4e7455a"
+    },
+    {
+      "name": "AES-128-GCM test case 2, one zero block",
+      "source": "NIST GCM specification, test case 2",
+      "keyHex": "00000000000000000000000000000000",
+      "nonceHex": "000000000000000000000000",
+      "plaintextHex": "00000000000000000000000000000000",
+      "expectedCiphertextWithTagHex": "0388dace60b6a392f328c2b971b2fe78ab6e47d42cec13bdf53a67b21257bddf"
+    }
+  ],
+  "classical": [
+    {
+      "name": "Caesar shift 3 of HELLO",
+      "source": "Standard worked example",
+      "algorithm": "caesar",
+      "inputText": "HELLO",
+      "shift": 3,
+      "expectedText": "KHOOR"
+    },
+    {
+      "name": "Caesar shift 13 of ATTACKATDAWN",
+      "source": "Standard worked example, ROT13",
+      "algorithm": "caesar",
+      "inputText": "ATTACKATDAWN",
+      "shift": 13,
+      "expectedText": "NGGNPXNGQNJA"
+    },
+    {
+      "name": "Vigenere keyword LEMON on ATTACKATDAWN",
+      "source": "Standard worked example",
+      "algorithm": "vigenere",
+      "inputText": "ATTACKATDAWN",
+      "keyword": "LEMON",
+      "expectedText": "LXFOPVEFRNHR"
+    }
+  ]
+}

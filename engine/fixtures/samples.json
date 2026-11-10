@@ -1,0 +1,148 @@
+{
+  "note": "Safe sample inputs for the lab. No real credentials, no personal data and no material taken from any live system. The adverse samples are deliberately weak configurations used to prove that the engine raises the correct warning.",
+  "safe": [
+    {
+      "id": "safe-01",
+      "label": "Short classroom message",
+      "type": "classical-cipher",
+      "text": "MEET AT THE LIBRARY AT NOON",
+      "shift": 7,
+      "mode": "caesar",
+      "expectation": "Completed with a warning that the Caesar cipher is not confidential."
+    },
+    {
+      "id": "safe-02",
+      "label": "Authenticated encryption round trip",
+      "type": "authenticated-encryption",
+      "text": "Attendance sheet for lab session four.",
+      "expectation": "Completed. Original accepted, tampered copy rejected."
+    },
+    {
+      "id": "safe-03",
+      "label": "Key derivation at the configured minimum",
+      "type": "hashing-kdfs",
+      "text": "correct horse battery staple",
+      "iterations": 100000,
+      "expectation": "Completed with no cost warning."
+    },
+    {
+      "id": "safe-04",
+      "label": "Avalanche measurement on ordinary text",
+      "type": "avalanche",
+      "text": "CipherClassroom avalanche sample",
+      "expectation": "Average changed bits inside the configured band."
+    },
+    {
+      "id": "safe-05",
+      "label": "Vigenere with an adequate keyword",
+      "type": "classical-cipher",
+      "text": "ATTACKATDAWN",
+      "secondary": "LEMON",
+      "mode": "vigenere",
+      "expectation": "Completed with a warning that Vigenere is still a classical cipher."
+    }
+  ],
+  "adverse": [
+    {
+      "id": "adverse-01",
+      "label": "Key derivation at a negligible cost",
+      "type": "hashing-kdfs",
+      "text": "summer2024",
+      "iterations": 1000,
+      "expectedIndicator": "KDF_COST_BELOW_CRITICAL",
+      "expectation": "Critical. The engine must name the iteration threshold, not report only that the setting is unsafe."
+    },
+    {
+      "id": "adverse-02",
+      "label": "Nonce reused across two messages",
+      "type": "nonce-reuse",
+      "text": "TRANSFER 100 NOW",
+      "secondary": "TRANSFER 900 NOW",
+      "expectedIndicator": "NONCE_REUSED_UNDER_SAME_KEY",
+      "expectation": "Critical. The second message must be recovered exactly from the first."
+    },
+    {
+      "id": "adverse-03",
+      "label": "Caesar shift that performs no encryption",
+      "type": "classical-cipher",
+      "text": "PLAINTEXT STAYS PLAIN",
+      "shift": 0,
+      "mode": "caesar",
+      "expectedIndicator": "CAESAR_SHIFT_INEFFECTIVE",
+      "expectation": "Critical. Output equals input, so no confidentiality is applied at all."
+    },
+    {
+      "id": "adverse-04",
+      "label": "Vigenere keyword too short to resist analysis",
+      "type": "classical-cipher",
+      "text": "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+      "secondary": "AB",
+      "mode": "vigenere",
+      "expectedIndicator": "VIGENERE_KEYWORD_TOO_SHORT",
+      "expectation": "Warning naming the configured minimum keyword length."
+    },
+    {
+      "id": "adverse-05",
+      "label": "Caesar ciphertext recovered without the key",
+      "type": "classical-cipher",
+      "text": "WKH WUHDVXUH LV EXULHG XQGHU WKH ROG RDN WUHH",
+      "mode": "break",
+      "expectedIndicator": "CLASSICAL_CIPHER_BROKEN_WITHOUT_KEY",
+      "expectation": "Critical. The engine recovers shift 3 and the readable plaintext using letter frequencies alone."
+    }
+  ],
+  "malformed": [
+    {
+      "id": "bad-01",
+      "label": "Empty input",
+      "type": "classical-cipher",
+      "text": "",
+      "expectedCode": "INVALID_INPUT"
+    },
+    {
+      "id": "bad-02",
+      "label": "Oversized input",
+      "type": "classical-cipher",
+      "textRepeat": { "character": "A", "count": 5000 },
+      "expectedCode": "INPUT_TOO_LARGE"
+    },
+    {
+      "id": "bad-03",
+      "label": "Shift outside the permitted range",
+      "type": "classical-cipher",
+      "text": "HELLO",
+      "shift": 99,
+      "expectedCode": "INVALID_PARAMETER"
+    },
+    {
+      "id": "bad-04",
+      "label": "Unknown experiment type",
+      "type": "rsa-factoring",
+      "text": "HELLO",
+      "expectedCode": "UNSUPPORTED_TYPE"
+    },
+    {
+      "id": "bad-05",
+      "label": "Nonce reuse messages of different lengths",
+      "type": "nonce-reuse",
+      "text": "SHORT",
+      "secondary": "A MUCH LONGER MESSAGE",
+      "expectedCode": "LENGTH_MISMATCH"
+    },
+    {
+      "id": "bad-06",
+      "label": "Control characters in the input",
+      "type": "classical-cipher",
+      "textWithControl": true,
+      "expectedCode": "INVALID_INPUT"
+    },
+    {
+      "id": "bad-07",
+      "label": "Iteration count above the laptop safety ceiling",
+      "type": "hashing-kdfs",
+      "text": "password",
+      "iterations": 50000000,
+      "expectedCode": "INVALID_PARAMETER"
+    }
+  ]
+}
