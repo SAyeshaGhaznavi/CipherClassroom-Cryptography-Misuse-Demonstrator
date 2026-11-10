@@ -1,0 +1,20 @@
+{
+  "name": "cipherclassroom-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CipherClassroom security engine and evaluation fixtures (Member B)",
+  "license": "MIT",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-fixtures.js",
+    "test": "npm run build && node dist/tests/unit.test.js",
+    "evaluate": "npm run build && node dist/tests/evaluation.js",
+    "demo": "npm run build && node dist/tests/demo.js",
+    "clean": "node scripts/clean.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.3"
+  }
+}
