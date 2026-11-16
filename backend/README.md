@@ -15,7 +15,7 @@ Stack: Node.js, Express, TypeScript, SQLite.
 
 ## Setup (VS Code terminal, Windows)
 
-Requires Node.js 20.12 or newer.
+Requires Node.js 22 LTS (the same version the frontend recommends).
 
 ```powershell
 cd backend
@@ -159,9 +159,37 @@ listens on `127.0.0.1`, so only this computer can reach it.
 
 ## Connecting the frontend
 
-These steps are in Member C's code; the backend is ready for them:
+The backend is ready: `test/frontend.test.ts` replays the frontend's own
+requests from `http://localhost:5173` and passes. These changes are in
+Member C's code (`frontend/src/lib/api.ts` and `App.tsx`):
 
-1. Set `VITE_DEMO_MODE=false` in `frontend/.env`.
-2. Send `{ username, password }` to `POST /auth/login` (the role is read from the database).
-3. Keep `csrfToken` from the login response and send it as the `X-CSRF-Token` header on `POST`/`PATCH` requests.
-4. Use `localhost` (not `127.0.0.1`) for both the frontend and the API, so the browser sends the session cookie.
+### Needed for the frontend to work with the API
+
+1. Create `frontend/.env` with `VITE_DEMO_MODE=false` and `VITE_API_BASE_URL=http://localhost:3001/api`.
+2. Login: add a password field and send `{ username, password }` to `POST /auth/login`.
+   The role dropdown is not needed; the server reads the role from the database.
+3. CSRF: keep `csrfToken` from the login response and send it as the
+   `X-CSRF-Token` header on every `POST` and `PATCH` (except login).
+4. Logout: call `POST /auth/logout` (with the CSRF header) before clearing the user.
+
+### Needed to meet the project requirements
+
+1. After a page refresh, call `GET /auth/me` to get the user and a fresh
+   `csrfToken` back, instead of showing the login page again.
+2. Export: use `GET /reports/:id/export`. In API mode `api.log()` does nothing,
+   so the browser-side export is not written to the audit log; the server
+   route is ("Log ... export").
+3. Admin: add a form that sends `PATCH /admin/config` with
+   `{ "<field>": <value>, "confirm": true }` after a confirmation dialog. The
+   response is the full new policy. This is needed for the demonstration in the
+   requirements: "An administrator changes one permitted rule or threshold,
+   repeats the test, and demonstrates that both the new result and
+   configuration change are traceable."
+
+### Good to know
+
+- Open the frontend at `http://localhost:5173`, not `127.0.0.1` or a network
+  address. Otherwise the browser does not send the session cookie and CORS refuses it.
+- Error responses are `{ code, message }`; `api.ts` already shows `message`.
+- The demo-only "Reset" button on the Admin page has no API route, because the
+  audit log is append-only.
