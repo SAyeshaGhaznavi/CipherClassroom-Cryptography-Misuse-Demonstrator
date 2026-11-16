@@ -5,6 +5,9 @@
   "description": "CipherClassroom API, data and authentication layer (Member A)",
   "license": "MIT",
   "main": "dist/src/server.js",
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
     "engine:install": "npm --prefix ../engine install",
     "engine:build": "npm --prefix ../engine run build",
