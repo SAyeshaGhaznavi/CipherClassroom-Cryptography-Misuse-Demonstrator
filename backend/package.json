@@ -1,0 +1,39 @@
+{
+  "name": "cipherclassroom-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CipherClassroom API, data and authentication layer (Member A)",
+  "license": "MIT",
+  "main": "dist/src/server.js",
+  "scripts": {
+    "engine:install": "npm --prefix ../engine install",
+    "engine:build": "npm --prefix ../engine run build",
+    "postinstall": "npm run engine:install && npm run engine:build",
+    "dev": "npm run engine:build && tsx watch src/server.ts",
+    "build": "npm run engine:build && tsc -p tsconfig.json",
+    "start": "node dist/src/server.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run engine:build && node --import tsx --test --test-reporter=spec test/*.test.ts",
+    "seed": "tsx src/scripts/seed.ts",
+    "reset-password": "tsx src/scripts/resetPassword.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.2.0",
+    "cipherclassroom-engine": "file:../engine",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.5",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.3.2",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9"
+  }
+}
