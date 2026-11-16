@@ -15,7 +15,8 @@ Stack: Node.js, Express, TypeScript, SQLite.
 
 ## Setup (VS Code terminal, Windows)
 
-Requires Node.js 22 LTS (the same version the frontend recommends).
+Requires **Node.js 22.12 or newer** (Node 22 LTS). The SQLite library does not
+support Node 20. Check with `node -v`.
 
 ```powershell
 cd backend
@@ -159,37 +160,65 @@ listens on `127.0.0.1`, so only this computer can reach it.
 
 ## Connecting the frontend
 
-The backend is ready: `test/frontend.test.ts` replays the frontend's own
-requests from `http://localhost:5173` and passes. These changes are in
-Member C's code (`frontend/src/lib/api.ts` and `App.tsx`):
+The current frontend does **not** work with the API yet: its login sends no
+password, so every login is refused with "Password is required". The backend
+side is ready. `test/frontend.test.ts` sends, from `http://localhost:5173`, the
+requests the frontend will make **after** the changes below (login with
+password, `/auth/me`, running an experiment, history, audit log, logout), and
+checks the CORS headers, the cookie and the response shapes.
+
+These changes are in Member C's code (`frontend/src/lib/api.ts` and `App.tsx`):
 
 ### Needed for the frontend to work with the API
 
-1. Create `frontend/.env` with `VITE_DEMO_MODE=false` and `VITE_API_BASE_URL=http://localhost:3001/api`.
+1. Copy `frontend/.env.example` to `frontend/.env` and set `VITE_DEMO_MODE=false`.
+   Restart `npm run dev` afterwards.
 2. Login: add a password field and send `{ username, password }` to `POST /auth/login`.
    The role dropdown is not needed; the server reads the role from the database.
 3. CSRF: keep `csrfToken` from the login response and send it as the
    `X-CSRF-Token` header on every `POST` and `PATCH` (except login).
-4. Logout: call `POST /auth/logout` (with the CSRF header) before clearing the user.
+   The token stays the same for the whole session.
+4. Logout: call `POST /auth/logout` (with the CSRF header), then clear the user
+   **even if that call fails** (for example because the session already expired).
 
 ### Needed to meet the project requirements
 
-1. After a page refresh, call `GET /auth/me` to get the user and a fresh
-   `csrfToken` back, instead of showing the login page again.
-2. Export: use `GET /reports/:id/export`. In API mode `api.log()` does nothing,
-   so the browser-side export is not written to the audit log; the server
-   route is ("Log ... export").
+1. After a page refresh, call `GET /auth/me`. It returns the user and the
+   session's `csrfToken`, so the user does not have to log in again.
+2. Export: the requirements say exports must be logged. In API mode `api.log()`
+   does nothing, so the browser-side `downloadReport()` leaves no audit event.
+   `GET /reports/:id/export` writes a `report.export` audit event and returns the
+   same sanitized report. Use it for **both** Export buttons: on the result page
+   and in the History table. The History page "Export CSV" button has no server
+   route; tell Member A if it must be logged too.
 3. Admin: add a form that sends `PATCH /admin/config` with
    `{ "<field>": <value>, "confirm": true }` after a confirmation dialog. The
-   response is the full new policy. This is needed for the demonstration in the
+   response is the full policy. This is needed for the demonstration in the
    requirements: "An administrator changes one permitted rule or threshold,
    repeats the test, and demonstrates that both the new result and
    configuration change are traceable."
+
+   | Field | Allowed values |
+   | --- | --- |
+   | `maxInputLength` | 1 to 10000 |
+   | `criticalKdfIterations` | 1 to 600000, not above `minSafeKdfIterations` |
+   | `minSafeKdfIterations` | 1 to 600000 |
+   | `maxKdfIterations` | 1000 to 2000000 |
+   | `minAvalancheBits` | 0 to 256, not above `maxAvalancheBits` |
+   | `maxAvalancheBits` | 0 to 256 |
+   | `minVigenereKeywordLength` | 1 to 64 |
+
+   There is no GET route for the policy (it is not in `docs/API_CONTRACT.md`).
+   To show the current values, send `PATCH /admin/config` with only
+   `{ "confirm": true }`: nothing changes and the response is the current policy.
+   A wrong field name returns `POLICY_VIOLATION`, a value out of range returns
+   `INVALID_PARAMETER`.
 
 ### Good to know
 
 - Open the frontend at `http://localhost:5173`, not `127.0.0.1` or a network
   address. Otherwise the browser does not send the session cookie and CORS refuses it.
 - Error responses are `{ code, message }`; `api.ts` already shows `message`.
-- The demo-only "Reset" button on the Admin page has no API route, because the
-  audit log is append-only.
+- The Admin page "Reset" button only clears the experiment results saved in the
+  browser in demo mode. In API mode it shows an error, because there is no route
+  to delete stored results. Hide it when `api.isDemo` is false.

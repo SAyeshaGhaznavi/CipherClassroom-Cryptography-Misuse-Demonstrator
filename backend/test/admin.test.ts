@@ -74,6 +74,25 @@ describe('lab configuration', () => {
     assert.equal(run.body.engine.policyVersion, 'policy-1.0+1');
   });
 
+  it('with only "confirm": true it changes nothing and returns the current policy', async () => {
+    const { app, repos } = await setup();
+    const { agent, csrf } = await login(app, 'admin');
+    const res = await agent.patch('/api/admin/config').set('X-CSRF-Token', csrf).send({ confirm: true });
+
+    assert.equal(res.status, 200);
+    assert.equal(res.body.policyVersion, 'policy-1.0');
+    assert.equal(res.body.minSafeKdfIterations, 100000);
+    assert.ok(!auditActions(repos).includes('config.change'));
+  });
+
+  it('refuses a value outside the allowed range', async () => {
+    const { app } = await setup();
+    const { agent, csrf } = await login(app, 'admin');
+    const res = await agent.patch('/api/admin/config').set('X-CSRF-Token', csrf).send({ maxInputLength: 0, confirm: true });
+    assert.equal(res.status, 400);
+    assert.equal(res.body.code, 'INVALID_PARAMETER');
+  });
+
   it('refuses a field that may not be changed, and logs the refusal', async () => {
     const { app, repos } = await setup();
     const { agent, csrf } = await login(app, 'admin');
