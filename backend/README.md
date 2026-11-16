@@ -64,6 +64,9 @@ These are the routes from `docs/API_CONTRACT.md`. Base URL: `http://localhost:30
 | PATCH | `/admin/config` | admin | Change a permitted lab policy value |
 | GET | `/reports/:id/export` | signed in | Download a sanitized report |
 
+Opening `http://localhost:3001/api` in a browser shows `"status": "running"` and
+this list of endpoints, so you can check that the server is up.
+
 **CSRF token:** every `POST`/`PATCH` except login must send the `csrfToken`
 from the login response in the `X-CSRF-Token` header.
 

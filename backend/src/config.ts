@@ -13,6 +13,8 @@ export interface AppConfig {
   sessionHours: number;
   /** true = send the session cookie only over HTTPS. */
   cookieSecure: boolean;
+  /** true = print one line per request in the terminal. */
+  logRequests: boolean;
 }
 
 /** Loads the .env file into process.env, if the file exists. */
@@ -44,6 +46,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   }
 
   const cookieSecure = env.COOKIE_SECURE === 'true';
+  const logRequests = env.LOG_REQUESTS !== 'false';
 
-  return { port, databasePath, corsOrigins, sessionHours, cookieSecure };
+  return { port, databasePath, corsOrigins, sessionHours, cookieSecure, logRequests };
 }

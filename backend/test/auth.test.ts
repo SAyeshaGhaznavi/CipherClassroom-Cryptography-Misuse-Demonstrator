@@ -4,6 +4,16 @@ import request from 'supertest';
 import { sha256 } from '../src/security/tokens';
 import { auditActions, login, PASSWORDS, setup } from './helpers';
 
+describe('API status', () => {
+  it('GET /api shows that the server is running and lists the endpoints', async () => {
+    const { app } = await setup();
+    const res = await request(app).get('/api');
+    assert.equal(res.status, 200);
+    assert.equal(res.body.status, 'running');
+    assert.ok(res.body.endpoints.includes('POST  /api/auth/login'));
+  });
+});
+
 describe('login', () => {
   it('logs in and takes the role from the database, not from the request', async () => {
     const { app, repos } = await setup();

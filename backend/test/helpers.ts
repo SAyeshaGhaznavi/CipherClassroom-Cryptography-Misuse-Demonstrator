@@ -40,7 +40,7 @@ async function hashOnce(password: string): Promise<string> {
 /** Builds an app. Pass a file path instead of ':memory:' to test a restart. */
 export async function setup(databasePath = ':memory:'): Promise<TestApp> {
   const db = openDatabase(databasePath);
-  const config = loadConfig({ DATABASE_PATH: databasePath });
+  const config = loadConfig({ DATABASE_PATH: databasePath, LOG_REQUESTS: 'false' });
   const { app, repos } = createApp(config, db);
 
   const roles: Role[] = ['admin', 'operator', 'viewer'];
