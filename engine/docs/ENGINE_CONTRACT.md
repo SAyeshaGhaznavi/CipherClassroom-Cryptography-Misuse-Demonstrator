@@ -1,26 +1,15 @@
 # Engine contract
 
-How the backend and the frontend call into the security engine. Everything
-below is exported from `src/index.ts`, which is the only file anything
-outside this folder needs to import from.
-
-The backend depends on this folder as a package:
-
-```json
-"dependencies": {
-  "cipherclassroom-engine": "file:../engine"
-}
-```
-
-so it imports by package name, and its `postinstall` installs and builds
-this folder automatically.
+How members A and C call into the security engine. Everything below is
+exported from `src/index.ts`, which is the only file either of you needs to
+import from.
 
 ## For member A, the API and data layer
 
 ### Running an experiment
 
 ```ts
-import { runExperiment, toSafeError, EngineError } from 'cipherclassroom-engine';
+import { runExperiment, toSafeError, EngineError } from '../engine/src';
 
 app.post('/api/experiments', requireRole('operator', 'admin'), async (req, res) => {
   try {
@@ -82,7 +71,7 @@ one of these.
 ### Administrator configuration
 
 ```ts
-import { getPolicy, updatePolicy } from 'cipherclassroom-engine';
+import { getPolicy, updatePolicy } from '../engine/src';
 
 app.patch('/api/admin/config', requireRole('admin'), (req, res) => {
   try {
@@ -167,7 +156,7 @@ to put in front of a viewer.
 ## Supported types
 
 ```ts
-import { listSupportedTypes } from 'cipherclassroom-engine';
+import { listSupportedTypes } from '../engine/src';
 ```
 
 Returns the six values the lab offers, which is useful for building a
@@ -176,7 +165,7 @@ dropdown or for validating on the server without hardcoding the list twice.
 ## Running the fixtures yourself
 
 ```ts
-import { loadSamples, loadVectors } from 'cipherclassroom-engine';
+import { loadSamples, loadVectors } from '../engine/src';
 ```
 
 `loadSamples()` returns the safe, adverse and malformed sample sets.
