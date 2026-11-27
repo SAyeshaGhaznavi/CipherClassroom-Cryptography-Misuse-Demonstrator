@@ -2,7 +2,7 @@
 
 Security engine and evaluation fixtures, Member B.
 
-Generated: 2026-11-10T09:53:30.005Z
+Generated: 2026-11-27T10:18:51.235Z
 
 Engine version: engine-1.0. Policy version at the start of the run: policy-1.0.
 
@@ -71,8 +71,8 @@ Original accepted: Yes. Tampered accepted: No, rejected as expected
 **Evidence**
 
 ```
-Ciphertext with tag, hex: 8b31e42afa9d34fff7635503bff691fe...60430e29b77c2a2a1240424f0ac2da3c
-Tampered ciphertext, hex: 8a31e42afa9d34fff7635503bff691fe...60430e29b77c2a2a1240424f0ac2da3c
+Ciphertext with tag, hex: 57bc35bd435db0accbb6b32c085bb6f2...1fa1e282e2873c2c06b7d331bc4b5828
+Tampered ciphertext, hex: 56bc35bd435db0accbb6b32c085bb6f2...1fa1e282e2873c2c06b7d331bc4b5828
 Original message accepted: Yes
 Tampered message accepted: No, rejected as expected
 Rejection reason: Authentication tag did not verif...rejected without being returned.
@@ -122,8 +122,8 @@ Relationship Confirmed. Recovered "TRANSFER 900 NOW". Exact: Yes, byte for byte
 **Evidence**
 
 ```
-First ciphertext without tag, hex: 63799b2aa2c819bd0b3fc1bb262bf6fe
-Second ciphertext without tag, hex: 63799b2aa2c819bd0b37c1bb262bf6fe
+First ciphertext without tag, hex: 740e860138f644d05902efe66efcfcbd
+Second ciphertext without tag, hex: 740e860138f644d0590aefe66efcfcbd
 Ciphertext XOR: 00000000000000000008000000000000
 Plaintext XOR: 00000000000000000008000000000000
 Relationship C1 XOR C2 = P1 XOR P2: Confirmed
@@ -254,11 +254,11 @@ Five distinct identifiers were generated
 **Evidence**
 
 ```
-Submission 1 identifier 3742e103-592c-4991-95a9-a974fe3f4d51
-Submission 2 identifier 7b4915f5-a2ba-4cff-bd88-17425ad899d1
-Submission 3 identifier ec22e0d4-7e3f-470a-95a3-a29c2da50d9b
-Submission 4 identifier 6e94fb55-126c-41d7-af0d-9a212bb07b3e
-Submission 5 identifier da7a55e1-afb9-4a32-b8a7-6be0aad9386f
+Submission 1 identifier 3dab4754-4734-49bc-85f8-91d5fb9808b7
+Submission 2 identifier 6a8cbdce-9e9d-4ee0-aad6-b5058068c8d3
+Submission 3 identifier 03be0f28-6355-4d22-8319-0fd368ff4aa7
+Submission 4 identifier 6c3c6e1d-34ea-4a85-883f-9463b02028ea
+Submission 5 identifier 14499743-8da7-4594-88d0-22cd4d738dd5
 ```
 
 ## T-final-d Configuration change and recovery after restart
