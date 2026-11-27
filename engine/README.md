@@ -90,17 +90,34 @@ decision. The specification asks for that information to be stored with
 every result so a reviewer can reproduce the decision later. Anyone who
 does not want it can drop the field and the rest still matches.
 
-Member A calls `runExperiment(input, options)` and passes an
-`onAuditEvent` callback. The engine hands back suggested audit events so
-the repository layer can append them. The engine itself stores nothing.
+The backend in `../backend` now consumes this folder as a normal package.
+It declares `"cipherclassroom-engine": "file:../engine"` in its
+dependencies, installs and builds this folder in its own `postinstall`,
+and imports by package name rather than by relative path. So running
+`npm install` in `backend` is enough, and there is no separate step to
+build the engine first.
 
-Member C already has a demonstration engine inside the frontend for working
-offline. That file is untouched. When the API is live, the frontend can
-switch to real results without changing a single component, because the
-shape is the same.
+The backend calls `runExperiment(input, options)` and passes an
+`onAuditEvent` callback. The engine hands back suggested audit events and
+the repository layer appends them to the audit table. The engine itself
+stores nothing, which is why the lab policy had to be saved on the backend
+side to survive a restart.
 
-`docs/ENGINE_CONTRACT.md` in this folder has the call signatures and a
-worked example for both.
+The frontend still ships a demonstration engine for working offline, and
+that file is untouched. With `VITE_DEMO_MODE=false` it calls the API
+instead, and no component needed changing for the results themselves,
+because the shape is the same one written down in `docs/API_CONTRACT.md`.
+
+`docs/ENGINE_CONTRACT.md` in this folder has the call signatures and
+worked examples.
+
+## Module settings
+
+`tsconfig.json` uses `"module": "Node16"` and `"moduleResolution": "Node16"`
+to match the backend. The compiled output is still CommonJS, because this
+package does not set `"type": "module"`, so nothing about how the engine
+behaves changes. The two folders simply resolve modules the same way, which
+avoids a deprecation error on newer TypeScript.
 
 ## Security decisions, and why
 
